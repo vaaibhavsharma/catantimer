@@ -6,8 +6,8 @@
     <title>Board Game Timer</title>
 
     <meta name="description" content="Dead Simple board game timer tool. Perfect for turn-based games, strategy games, and tabletop gaming sessions. Easy-to-use multiplayer timer with customizable settings."/>
-    <meta name="keywords" content="board game timer, game timer, turn timer, tabletop timer, strategy game timer, chess timer, board game tools, gaming accessories"/>
-    <meta name="author" content="Board Game Timer"/>
+    <meta name="keywords" content="catan, board game timer, game timer, turn timer, tabletop timer, strategy game timer, chess timer, board game tools, gaming accessories"/>
+    <meta name="author" content="Vaibhav Sharma"/>
     <meta name="robots" content="index, follow"/>
     <meta name="language" content="English"/>
     <meta name="rating" content="General"/>
@@ -39,7 +39,7 @@
     
     <style>
         html, body { overflow: auto; min-height: 100vh; }
-        
+
         .switch {
             position: relative;
             display: inline-block;
@@ -228,6 +228,25 @@
     </div>
 
     <script>
+        let wakeLock = null;
+
+        async function requestWakeLock() {
+            try {
+                wakeLock = await navigator.wakeLock.request('screen');
+            } catch (err) {
+                console.error('Failed to request wake lock:', err);
+            }
+        }
+
+        function releaseWakeLock() {
+            if (wakeLock) {
+                wakeLock.release();
+                wakeLock = null;
+            }
+        }
+
+        
+
         // Board Game Timer Class
         class BoardGameTimer {
             constructor() {
@@ -495,6 +514,19 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             const timer = new BoardGameTimer();
+            
+            if ('wakeLock' in navigator){
+                document.addEventListener('visibilitychange', () => {
+                    if (document.visibilityState === 'visible') {
+                        requestWakeLock();
+                    } else {
+                        releaseWakeLock();
+                    }
+                });
+
+                requestWakeLock();
+            }
+
         });
     </script>
 </body>
